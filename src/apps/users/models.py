@@ -22,7 +22,7 @@ class User(models.Model):
     def get_user_data_full(user) -> dict:
         user_data = {
                 "userId": encript(user.id),
-                "subscribersAmount": len(user.subscribers),
+                "subscribersAmount": user.subscribers.count(),
                 "avatar": user.avatar,
                 "firstName": user.first_name,
                 "lastName": user.last_name,
@@ -59,13 +59,13 @@ class User(models.Model):
                 continue
             
             if not isinstance(value, str):
-                response = mess[400]
-                response['message'] = response['message'] + f'. {field} not correct'
+                response = mess[400].copy()
+                response['message'] = f'Bad request. {field} not correct'
                 return False, response
 
             if not re.match(regex_patterns[field], value):
-                response = mess[400]
-                response['message'] = response['message'] + f'. Invalid value for {field}'
+                response = mess[400].copy()
+                response['message'] = f'Bad request. Invalid value for {field}'
                 return False, response
 
         return True, "All data correct"
@@ -79,13 +79,13 @@ class User(models.Model):
         :return: tuple - bool values of result and error message
         """
         if User.objects.filter(user_name=userName).exists():
-            response = mess[400]
-            response['message'] = response['message'] + f'. The Username is busy'
+            response = mess[400].copy()
+            response['message'] = f'Bad request. The Username is busy'
             return False, response
 
         elif User.objects.filter(email=email_user).exists():
-            response = mess[400]
-            response['message'] = response['message'] + f'. The email address is busy'
+            response = mess[400].copy()
+            response['message'] = f'Bad request. The email address is busy'
             return False, response
 
         else:
@@ -94,7 +94,7 @@ class User(models.Model):
     
     @staticmethod
     def get_data_in_request(data: dict):
-        return {'first_name': data.get("firstName"), 
+        return {'first_name': data["firstName"], 
                  'last_name': data.get("lastName"), 
-                 'user_name' : data.get("userName"), 
-                 'email' : data.get("email")}
+                 'user_name' : data["userName"], 
+                 'email' : data["email"]}

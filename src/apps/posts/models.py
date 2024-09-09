@@ -114,12 +114,12 @@ class Post(models.Model):
             
             if not isinstance(value, str):
                 response = mess[400]
-                response['message'] = response['message'] + f'. {field} not correct'
+                response['message'] = f'Bad request. {field} not correct'
                 return False, response
 
             if not re.match(regex_patterns[field], value):
                 response = mess[400]
-                response['message'] = response['message'] + f'. Invalid value for {field}'
+                response['message'] = f'Bad request. Invalid value for {field}'
                 return False, response
 
         return True, "All data correct"

@@ -29,8 +29,13 @@ def registration_users(request) -> dict:
     # Генерируем уникальный ID 
     user_id = generate_string(30, User)
 
-    # Получение данных из запроса
-    user_data = User.get_data_in_request(request.POST)
+    # Получение данных из запроса    
+    request_data = MultiPartParser(request.META, request, request.upload_handlers).parse()
+    try:
+        user_data = User.get_data_in_request(request_data[0])
+        user_data["password"] = request_data[0].get("password")
+    except Exception as error:
+        return mess[400]
     
     # Валидация данных
     validate, message_validate = User.validate_data(user_data)
@@ -51,19 +56,15 @@ def registration_users(request) -> dict:
         tags = []
     
     # Проверка наличия фото
-    try:
-        file = request.FILES.get['avatar']
-        if file:
-            url = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
-        else:
-            url = None
-    except Exception as error:
+    file = request_data[1].get("avatar")
+    if file:
+        url = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
+    else:
         url = None
         
     # Зашифровываем пароль
     try:
-        cripto_password = encrypt_string(request.POST.get("password"))
-    
+        cripto_password = encrypt_string(user_data.get("password"))
     except Exception as er:
         return mess[400]
     
@@ -79,13 +80,12 @@ def registration_users(request) -> dict:
                                     avatar=url,
                                     tags_user=tags,
                                     )
-        
 
-        save_media(file, url)
-        return mess[200]
-    
     except Exception as er:
         return mess[500]
+    
+    save_media(file, url)
+    return mess[200]
     
 
 def login(request) -> dict:
@@ -111,11 +111,13 @@ def login(request) -> dict:
                 
     # расшифровка пароля
     password = decrypt_string(user.password)
+    print(user.id)
 
     if password != password_user:
         return mess[400]
     
     else:
+        print(user.id)
         response = User.get_user_data_full(user)
         return response
 

@@ -59,7 +59,8 @@ def usersLogin(request): # Работает
 @require_http_methods(["POST"])
 def usersLogout(request): # Работает
     if request.method == "POST":
-        response = Authorization.check_logining(request)
+        user = Authorization.check_logining(request)
+        print(user.id)
         if isinstance(response, dict):
             response = JsonResponse(mess[401], status=401)
         else:
