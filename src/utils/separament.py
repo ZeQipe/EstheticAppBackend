@@ -149,7 +149,7 @@ class Parser:
             formatted_date = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
             
             url = []
-            for i in favorites_board.posts.all()[:-5:-1]:
+            for i in favorites_board.posts.all():
                 url.append(i.url)
             
             data["favorites"] = {
@@ -159,14 +159,14 @@ class Parser:
                     "dateOfCreation": formatted_date,
                     "url": url
             }
-        
+        print(boards )
         # Обработка всех остальных досок (если есть)
         for board in boards[start:start+end:]:
             created_at = board.created_at
-            board = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
+            formatted_date = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
             
             url = []
-            for i in board.posts.all()[:-3:-1]:
+            for i in reversed(board.posts.all()):
                 url.append(i.url)
             
             data["dashboards"].append({

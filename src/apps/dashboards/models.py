@@ -25,12 +25,12 @@ class Board(models.Model):
         :return: bool
         """
         # Если список id пустой, возвращаем False
-        if not user.dashboards_id:
+        if not user.boards.all():
             return False
         
         # Ищем доски пользователя по списку id и имени доски
         if Board.objects.filter(
-            Q(author=user) & Q(id__in=user.dashboards_id) & Q(name=name)
+            Q(author=user) & Q(name=name)
         ).exists():
             return True
         
@@ -45,7 +45,6 @@ class Board(models.Model):
         board = Board.objects.create(
                             id=id_board,
                             name=boardName,
-                            post_id_list=[],
                             author=author_model
                             )
         

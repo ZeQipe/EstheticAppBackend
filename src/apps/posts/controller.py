@@ -18,7 +18,7 @@ def create_post(request):
 
     request_data = MultiPartParser(request.META, request, request.upload_handlers).parse()
     post_data = Post.get_data_in_request(request_data[0])
-    print("21//")
+
     # Валидация данных для создания постов
     result_validate, message_validate = Post.validate_post_data(post_data)
     if not result_validate:
@@ -33,7 +33,7 @@ def create_post(request):
     
     post_data["id"] = generate_string(35, Post)
     post_data["author"] = cookie_user
-    print("36//")
+
     # Данные о файле
     file = request_data[1].get('file')
     if file:
@@ -41,18 +41,17 @@ def create_post(request):
             post_data["type_file"] = "img"
     else:
         return mess[204]
-    print("44//")
+    
     name_file = f"{post_data['id']}.{'jpg' if post_data['type_file'] == 'img' else 'mp4'}"
     post_data["url"] = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'img' / name_file
     
     # Отправляем в базу все данные
     try:
-        Post.create_new_posts(post_data)
+        post = Post.create_new_posts(post_data)
         save_media(file, post_data["url"])
         return mess[200]
         
     except Exception as er:
-        print(er )
         return mess[500]
 
 

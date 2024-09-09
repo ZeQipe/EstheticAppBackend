@@ -13,8 +13,6 @@ class User(models.Model):
     password = models.TextField()
     avatar = models.TextField(unique=True, blank=True, null=True)
     tags_user = models.JSONField(default=list)
-    saved_posts = models.JSONField(default=list)
-    dashboards = models.ManyToManyField('dashboards.Board', related_name='users_boards', blank=True)
     subscribers = models.ManyToManyField('self', symmetrical=False, related_name='following', blank=True)
     
     
@@ -94,7 +92,7 @@ class User(models.Model):
     
     @staticmethod
     def get_data_in_request(data: dict):
-        return {'first_name': data["firstName"], 
+        return {'first_name': data["firstName"],
                  'last_name': data.get("lastName"), 
                  'user_name' : data["userName"], 
                  'email' : data["email"]}

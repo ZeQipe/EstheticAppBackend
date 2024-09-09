@@ -24,17 +24,17 @@ def create_dashboards(request):
         return mess[400]
         
     result = Board.check_board_name(cookie_user, boardName)
-    if not result:
-        return mess[400]
+    if result:
+        response = mess[400].copy()
+        response['message'] = "It's dashboard name is busy."
+        return response
     
     # Создание доски
     try:
-        board = Board.create_board(boardName, cookie_user)
+        Board.create_board(boardName, cookie_user)
     except Exception as er:
+        print(er)
         return mess[500]
-    
-    # Добавление доски в список досок пользователя
-    cookie_user.dashboards.add(board)
     
     return mess[200]
     
@@ -53,8 +53,6 @@ def add_post_in_board(request, board_id):
         except Exception as er:
             try:
                 board = Board.create_board("Избранное", cookie_user)
-                cookie_user.dashboards.add(board)
-                cookie_user.save()
             except Exception as er:
                 return mess[500]
     else:
@@ -69,6 +67,11 @@ def add_post_in_board(request, board_id):
         post = Post.objects.get(id=data.get('postsId', ''))
     except Exception as er:
         return mess[404]
+    
+    if post in board.posts.all():
+        response = mess[400].copy()
+        response['message'] = f"This post has already been added"
+        return response
     
     # Добавления поста в доску
     board.posts.add(post)
@@ -91,26 +94,26 @@ def get_dashboard_detail(request, id_board):
 def get_user_dashboards(request, user_id):
     # Получаем query параметры offset и limit из запроса и пытаемся привести их к int.
     try:
-        offset = int(request.GET.get('offset', 0)) - 1 
+        offset = int(request.GET.get('offset', 0))
     except ValueError:
         offset = 0
 
     try:
-        limit = int(request.GET.get('limit', 20)) - 1 
+        limit = int(request.GET.get('limit', 20))
     except ValueError:
         limit = 20
     
     # Поиск пользователя в базе данных
     try:
-        user = User.objects.get(id=user_id)
+        user = User.objects.get(id=decrypt_string(user_id))
     except Exception as er:
         return mess[404]
     
     # Получение 
-    favorites_board = user.dashboards.filter(name="Избранное").first()
+    favorites_board = user.boards.filter(name="Избранное").first()
 
     # Получение всех досок пользователя, кроме "Избранное"
-    boards = user.dashboards.exclude(name="Избранное")
+    boards = user.boards.exclude(name="Избранное")
 
     response = pars.parse_dashboards(favorites_board, boards, offset, limit)
         

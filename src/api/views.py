@@ -10,11 +10,11 @@ from apps.dashboards.controller import *
 
 # Методы работы с пользователем
 @csrf_exempt
-def users_param(request, profileID): # Работает
-    if request.method == "GET":
+def users_param(request, profileID): 
+    if request.method == "GET": # Get user profile by userID
         response = get_user_profile(request, profileID)
     
-    elif request.method == "PUT":
+    elif request.method == "PUT": # Changing user profile by userID
         response = edit_user_profile(request, profileID)
     
     else:
@@ -25,8 +25,8 @@ def users_param(request, profileID): # Работает
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def usersRegistration(request): # Работает
-    if request.method == "POST":
+def usersRegistration(request): 
+    if request.method == "POST": # Create user profile
         response = registration_users(request)
     
     else:
@@ -37,8 +37,8 @@ def usersRegistration(request): # Работает
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def usersLogin(request): # Работает
-    if request.method == "POST":
+def usersLogin(request): 
+    if request.method == "POST": # LogIn user
         response = login(request)
 
         if response.get("userId", False):
@@ -57,8 +57,8 @@ def usersLogin(request): # Работает
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def usersLogout(request): # Работает
-    if request.method == "POST":
+def usersLogout(request):
+    if request.method == "POST": # LogOut user
         user = Authorization.check_logining(request)
         if isinstance(user, dict):
             response = JsonResponse(mess[401], status=401)
@@ -73,8 +73,8 @@ def usersLogout(request): # Работает
 
 
 @csrf_exempt
-def usersCreatedPosts(request): # не доделано, не проверено
-    if request.method == "GET":
+def usersCreatedPosts(request): # ------------------------------------- Не доделано
+    if request.method == "GET": # Get created users posts
         response = mess[501]
 
     else:
@@ -82,25 +82,14 @@ def usersCreatedPosts(request): # не доделано, не проверено
 
     return JsonResponse(response, status=mess.get("status", 200))
 
-
-@csrf_exempt
-def usersDashboards(request): # не доделано, не проверено
-    if request.method == "GET":
-        response = mess[501]
-    
-    else:
-        response = mess[405]
-        
-    return JsonResponse(response, status=mess.get("status", 200))
-
-
+# ---------------------------- ---------------------------- ----------------------------
 # Методы постов
 @csrf_exempt
-def posts(request): # Работает
-    if request.method == "GET":
+def posts(request): 
+    if request.method == "GET": # Get all posts
         response = search_posts(request)
     
-    elif request.method == "POST":
+    elif request.method == "POST": # Create post
         response = create_post(request)
 
     else:
@@ -110,14 +99,14 @@ def posts(request): # Работает
 
 
 @csrf_exempt
-def posts_param(request, postID): # не доделано, сделанные - работают
-    if request.method == "GET":
+def posts_param(request, postID): 
+    if request.method == "GET": # Get post by postID
         response = get_post_by_id(request, postID)
     
-    elif request.method == "PUT":
+    elif request.method == "PUT": # Changing post information by postID
         response = edit_post_by_id(request, postID)
     
-    elif request.method == "DELETE":
+    elif request.method == "DELETE": # ------------------------- не доделано
         response = mess[501]
     else:
         response = mess[405]
@@ -125,8 +114,8 @@ def posts_param(request, postID): # не доделано, сделанные - 
     return JsonResponse(response, status=mess.get("status", 200))
 
 @csrf_exempt
-def postsToggleLike(request, postsID): # не доделано, не проверено
-    if request.method == "PUT":
+def postsToggleLike(request, postsID): 
+    if request.method == "PUT": # ------------------------------ не доделано
         pass
     
     else:
@@ -135,11 +124,12 @@ def postsToggleLike(request, postsID): # не доделано, не прове�
     return JsonResponse(response, status=mess.get("status", 200))
 
 
+# ---------------------------- ---------------------------- ----------------------------
 # Методы Досок
 @csrf_exempt
 @require_http_methods(["POST"])
-def dashboards(request): # не проверено
-    if request.method == "POST":
+def dashboards(request): 
+    if request.method == "POST": # Create board
         response = create_dashboards(request)
 
     else:
@@ -151,7 +141,7 @@ def dashboards(request): # не проверено
 @csrf_exempt
 @require_http_methods(["POST"])
 def add_in_favorites(request):
-    if request.method == "POST":
+    if request.method == "POST": # Add post in board "Favorites"
         response = add_post_in_board(request, "favorites")
 
     else:
@@ -162,14 +152,14 @@ def add_in_favorites(request):
 
 @csrf_exempt
 @require_http_methods(["POST"])
-def dashboards_param(request, boardID): # не доделано, не проверено
-    if request.method == "GET":
+def dashboards_param(request, boardID): 
+    if request.method == "GET": # Get all information by board
         response = get_dashboard_detail(request, boardID)
 
-    elif request.method == "POST":
+    elif request.method == "POST": # Add post in board by boardID
         response = add_post_in_board(request, boardID)
     
-    elif request.method == "DELETE":
+    elif request.method == "DELETE":# ----------------------------- не доделано
         return mess[501]
 
     else:
@@ -179,8 +169,8 @@ def dashboards_param(request, boardID): # не доделано, не прове
 
 
 @csrf_exempt
-def dashboards_list(request, userID): # не доделано, не проверено
-    if request.method == "GET":
+def dashboards_list(request, userID): 
+    if request.method == "GET": # Get list information by boards
         response = get_user_dashboards(request, userID)
         
     else:
@@ -191,8 +181,8 @@ def dashboards_list(request, userID): # не доделано, не провер
 
 
 @csrf_exempt
-def dashboardsDeletePosts(request, boardID): # не доделано, не проверено
-    if request.method == "DELETE":
+def dashboardsDeletePosts(request, boardID): 
+    if request.method == "DELETE": # ------------------------------- Delete post in board
         pass
     
     else:
@@ -201,10 +191,11 @@ def dashboardsDeletePosts(request, boardID): # не доделано, не пр�
     return JsonResponse(response, status=mess.get("status", 200))
 
 
+# ---------------------------- ---------------------------- ----------------------------
 # Прочие методы
 @csrf_exempt
-def check_auth(request): # не доделано, не проверено
-    if request.method == "GET":
+def check_auth(request): 
+    if request.method == "GET": # Check authorization from user
         response = {
             "status": 200,
             "isAuth": not isinstance(Authorization.check_logining(request), dict)
