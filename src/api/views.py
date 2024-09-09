@@ -60,8 +60,7 @@ def usersLogin(request): # Работает
 def usersLogout(request): # Работает
     if request.method == "POST":
         user = Authorization.check_logining(request)
-        print(user.id)
-        if isinstance(response, dict):
+        if isinstance(user, dict):
             response = JsonResponse(mess[401], status=401)
         else:
             response = JsonResponse(mess[200], status=200)

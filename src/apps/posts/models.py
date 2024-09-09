@@ -128,17 +128,18 @@ class Post(models.Model):
     @staticmethod
     def create_new_posts(user_data: dict) -> dict:
         post = Post.objects.create(
-                            id=user_data["id"],  # ID поста
-                            author=user_data["author_id"],  # ID автора поста
-                            post_name=user_data["postName"],  # Название поста
-                            description=user_data["description"],  # Описание поста
-                            type_content=user_data["type_file"],  # Тип поста
-                            url=user_data["url"],  # URL файла на сервере
-                            tags_list=user_data["tags"], # Список комментариев
-                            aspect_ratio=user_data["aspectRatio"], # параметр, которые передается с фронта
-                            object_position=user_data["objectPosition"], # Позиция изображения
-                            link=user_data["link"] # Ссылка для сохранения
-                            )
+                                id=user_data["id"],  # ID поста
+                                author=user_data["author"],  # ID автора поста
+                                post_name=user_data["postName"],  # Название поста
+                                description=user_data["description"],  # Описание поста
+                                type_content=user_data["type_file"],  # Тип поста
+                                url=user_data["url"],  # URL файла на сервере
+                                tags_list=user_data["tags"], # Список комментариев
+                                aspect_ratio=user_data["aspectRatio"], # параметр, которые передается с фронта
+                                object_position=user_data["objectPosition"], # Позиция изображения
+                                link=user_data["link"] # Ссылка для сохранения
+                                )
+        
         return post
     
     
@@ -150,6 +151,6 @@ class Post(models.Model):
                 "postName": data.get("name"),
                 "description": data.get("description"),
                 "link": data.get("link"),
-                "aspectRatio": fileOptions["aspectRatio"],
-                "objectPosition": fileOptions["objectPosition"]
-        }
+                "aspectRatio": fileOptions.get("aspectRatio"),
+                "objectPosition": fileOptions.get("objectPosition")
+                }

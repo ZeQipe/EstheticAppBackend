@@ -29,6 +29,7 @@ class Parser:
 
     @staticmethod
     def packing_tags(tags: list[dict]) -> list[str]:
+        print(tags, type(tags))
         if not tags:
             return []
         
@@ -81,8 +82,8 @@ class Parser:
                             "objectPosition": post.object_position
                                     }
                             },
-                    "likeCount": len(post.id_users_like),
-                    "commentsCount": len(post.id_comments),
+                    "likeCount": post.users_liked.count(),
+                    "commentsCount": 0,
                     "tags": Parser.unpacking_tags(post.tags_list),
                     "author": {
                         "firstName": post.author.first_name,
@@ -93,7 +94,7 @@ class Parser:
                             }
                         },
                 "user": {
-                    "isLike": not isinstance(cookie_user, dict) and cookie_user.id in post.id_users_like,
+                    "isLike": not isinstance(cookie_user, dict) and cookie_user in post.users_liked.all(),
                     "isOwner": not isinstance(cookie_user, dict) and cookie_user.id == post.author.id
                         }
                 }

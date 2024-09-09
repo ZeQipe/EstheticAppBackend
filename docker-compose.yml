@@ -1,9 +1,13 @@
-version: '3'
+version: '3.8'
 
 services:
   web:
     build: .
-    command: python src/manage.py runserver 0.0.0.0:8000
+    command: >
+      sh -c "
+        python src/manage.py migrate &&
+        python src/manage.py runserver 0.0.0.0:8000
+      "
     volumes:
       - .:/app
     ports:
