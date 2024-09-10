@@ -124,10 +124,11 @@ def user_created_post_list(request, userID):
     user = Authorization.check_logining(decrypt_string(userID))
     
     if isinstance(user, dict):
-        return mess[404]
+        response = mess[404].copy()
+        response['message'] = "Not found User"
+        return response
     
     posts_user = user.posts.all()
-    
-    
+
     
     

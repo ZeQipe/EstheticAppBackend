@@ -33,6 +33,7 @@ ALLOWED_HOSTS = ['localhost', '127.0.0.1']
 # Application definition
 
 INSTALLED_APPS = [
+    'corsheaders',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +51,7 @@ CSRF_COOKIE_HTTPONLY = False
 CSRF_COOKIE_SAMESITE = None
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -64,9 +66,9 @@ CORS_ALLOW_ALL_ORIGINS = True
 
 # Дополнительные опции для настройки CORS (если необходимо)
 CORS_ALLOW_CREDENTIALS = True
-CORS_ALLOW_HEADERS = [
-    'content-type',
-]
+#CORS_ALLOW_HEADERS = [
+#    'content-type',
+#]
 
 # Удалите заголовок Cross-Origin-Opener-Policy или измените его значение
 SECURE_CROSS_ORIGIN_OPENER_POLICY = None
