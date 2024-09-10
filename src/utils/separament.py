@@ -14,9 +14,9 @@ class Parser:
 
         id_list = []
         while len(id_list) < len(tags):
-            id = generate_string(8)
+            id = generate_string(8, False)
             if id not in id_list:
-                id_list.append(generate_string(8))
+                id_list.append(generate_string(8, False))
             
         tag_response = []
         for i in range(len(id_list)):
