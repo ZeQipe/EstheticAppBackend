@@ -118,3 +118,16 @@ def get_user_dashboards(request, user_id):
     response = pars.parse_dashboards(favorites_board, boards, offset, limit)
         
     return response
+
+
+def user_created_post_list(request, userID):
+    user = Authorization.check_logining(decrypt_string(userID))
+    
+    if isinstance(user, dict):
+        return mess[404]
+    
+    posts_user = user.posts.all()
+    
+    
+    
+    

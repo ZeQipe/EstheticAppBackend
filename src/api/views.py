@@ -73,9 +73,9 @@ def usersLogout(request):
 
 
 @csrf_exempt
-def usersCreatedPosts(request): # ------------------------------------- Не доделано
+def usersCreatedPosts(request, userID): # ------------------------------------- Не доделано
     if request.method == "GET": # Get created users posts
-        response = mess[501]
+        response = user_created_post_list(request, userID)
 
     else:
         response = mess[405]
