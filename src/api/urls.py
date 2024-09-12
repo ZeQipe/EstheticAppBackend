@@ -12,8 +12,8 @@ urlpatterns = [
     path("users/registration", views.usersRegistration, name="user_registration"),
     path("users/login", views.usersLogin, name="user_login"),
     path("users/logout", views.usersLogout, name="user_logout"),
-    path("users/PrivateProfile", views.privateProfile, name="privateProfile"),
-    path("users/PublicProfile/<str:userID>", views.publicProfile, name="publicProfile"),
+    path("users/private-profile", views.privateProfile, name="privateProfile"),
+    path("users/public-profile/<str:userID>", views.publicProfile, name="publicProfile"),
     path("users/<str:userID>/created-posts", views.usersCreatedPosts, name="userCreatedPosts"),
     path("users/<str:profileID>", views.users_param, name="users_param"),
     
