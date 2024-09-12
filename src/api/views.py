@@ -3,6 +3,7 @@ from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from django.views.decorators.http import require_http_methods
 from service.authService import Authorization
+from service.deleteService import DeletterObject as deletter
 from apps.users.controller import *
 from apps.posts.controller import *
 from apps.dashboards.controller import *
@@ -11,10 +12,7 @@ from apps.dashboards.controller import *
 # Методы работы с пользователем
 @csrf_exempt
 def users_param(request, profileID): 
-    if request.method == "GET": # Get user profile by userID
-        response = get_user_profile(request, profileID)
-    
-    elif request.method == "PUT": # Changing user profile by userID
+    if request.method == "PUT": # Changing user profile by userID
         response = edit_user_profile(request, profileID)
     
     else:
@@ -22,6 +20,27 @@ def users_param(request, profileID):
         
     return JsonResponse(response, status=mess.get("status", 200))
 
+
+@csrf_exempt
+def publicProfile(request, userID):
+    if request.method == "GET": # Get Public profile by userID
+        response = get_user_profile(request, userID)
+
+    else:
+        response = mess[405]
+        
+    return JsonResponse(response, status=mess.get("status", 200))
+
+
+@csrf_exempt
+def privateProfile(request):
+    if request.method == "GET":
+        response = get_user_profile(request) # Get Private profile by cookie
+        
+    else:
+        response = mess[405]
+        
+    return JsonResponse(response, status=mess.get("status", 200))
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -50,7 +69,7 @@ def usersLogin(request):
             response = JsonResponse(response, status=response.get("status"))
 
     else:
-        response = JsonResponse(mess[405])
+        response = JsonResponse(mess[405], status=405)
 
     return response
 
@@ -73,7 +92,7 @@ def usersLogout(request):
 
 
 @csrf_exempt
-def usersCreatedPosts(request, userID): # ------------------------------------- Не доделано
+def usersCreatedPosts(request, userID):
     if request.method == "GET": # Get created users posts
         response = user_created_post_list(request, userID)
 
@@ -81,6 +100,18 @@ def usersCreatedPosts(request, userID): # ------------------------------------- 
         response = mess[405]
 
     return JsonResponse(response, status=mess.get("status", 200))
+
+
+@csrf_exempt
+def users(request):
+    if request.method == "DELETE": # Delete object
+        response = deletter.del_object(request, User)
+    
+    else:
+        response = mess[405]
+
+    return JsonResponse(response, status=mess.get("status", 200))
+     
 
 # ---------------------------- ---------------------------- ----------------------------
 # Методы постов
@@ -107,7 +138,8 @@ def posts_param(request, postID):
         response = edit_post_by_id(request, postID)
     
     elif request.method == "DELETE": # ------------------------- не доделано
-        response = mess[501]
+        response = deletter.del_object(request, Post, postID)
+
     else:
         response = mess[405]
         
@@ -116,7 +148,7 @@ def posts_param(request, postID):
 @csrf_exempt
 def postsToggleLike(request, postsID): 
     if request.method == "PUT": # ------------------------------ не доделано
-        pass
+        response = mess[501]
     
     else:
         response = mess[405]
@@ -160,7 +192,7 @@ def dashboards_param(request, boardID):
         response = add_post_in_board(request, boardID)
     
     elif request.method == "DELETE":# ----------------------------- не доделано
-        return mess[501]
+        response = deletter.del_object(request, Board, boardID)
 
     else:
         response = mess[405]
@@ -183,7 +215,7 @@ def dashboards_list(request, userID):
 @csrf_exempt
 def dashboardsDeletePosts(request, boardID): 
     if request.method == "DELETE": # ------------------------------- Delete post in board
-        pass
+        response = remove_posts_in_board(request, boardID)
     
     else:
         response = mess[405]
@@ -196,12 +228,13 @@ def dashboardsDeletePosts(request, boardID):
 @csrf_exempt
 def check_auth(request): 
     if request.method == "GET": # Check authorization from user
-        response = {
-            "status": 200,
-            "isAuth": not isinstance(Authorization.check_logining(request), dict)
-        }
-    
+        if isinstance(Authorization.check_logining(request), dict):
+            mess = {"isAuth": False}
+            response = JsonResponse(mess, status=mess.get("status", 401))
+        else:
+            mess = {"isAuth": True}
+            response = JsonResponse(mess, status=mess.get("status", 200))
     else:
-        response = mess[405]
+        response = JsonResponse(mess[405], status=mess[405])
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return response

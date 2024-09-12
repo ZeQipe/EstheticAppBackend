@@ -105,7 +105,7 @@ def get_user_dashboards(request, user_id):
     
     # Поиск пользователя в базе данных
     try:
-        user = User.objects.get(id=decrypt_string(user_id))
+        user = User.objects.get(id=user_id)
     except Exception as er:
         return mess[404]
     
@@ -121,7 +121,7 @@ def get_user_dashboards(request, user_id):
 
 
 def user_created_post_list(request, userID):
-    user = User.objects.get(id=decrypt_string(userID))
+    user = User.objects.get(id=userID)
     
     if isinstance(user, dict):
         response = mess[404].copy()
@@ -132,4 +132,8 @@ def user_created_post_list(request, userID):
 
     response = pars.parse_posts(posts_user)
     
-    return response    
+    return response
+
+
+def remove_posts_in_board(request, boardID):
+    pass

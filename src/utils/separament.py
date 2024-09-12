@@ -89,7 +89,7 @@ class Parser:
                         "firstName": post.author.first_name,
                         "lastName": post.author.last_name,
                         "userName": post.author.user_name,
-                        "userId": encript(post.author.id),
+                        "userId": post.author.id,
                         "avatar": post.author.avatar
                             }
                         },

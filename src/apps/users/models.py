@@ -19,7 +19,7 @@ class User(models.Model):
     @staticmethod
     def get_user_data_full(user) -> dict:
         user_data = {
-                "userId": encript(user.id),
+                "userId": user.id,
                 "subscribersAmount": user.subscribers.count(),
                 "avatar": user.avatar,
                 "firstName": user.first_name,

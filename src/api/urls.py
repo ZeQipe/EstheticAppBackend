@@ -8,9 +8,12 @@ urlpatterns = [
     path("posts/<str:postID>", views.posts_param, name="posts_param"),
 
     # USERS
+    path("users", views.users, name="users"),
     path("users/registration", views.usersRegistration, name="user_registration"),
     path("users/login", views.usersLogin, name="user_login"),
     path("users/logout", views.usersLogout, name="user_logout"),
+    path("users/PrivateProfile", views.privateProfile, name="privateProfile"),
+    path("users/PublicProfile/<str:userID>", views.publicProfile, name="publicProfile"),
     path("users/<str:userID>/created-posts", views.usersCreatedPosts, name="userCreatedPosts"),
     path("users/<str:profileID>", views.users_param, name="users_param"),
     

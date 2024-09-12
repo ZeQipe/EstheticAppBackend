@@ -99,22 +99,22 @@ def login(request) -> dict:
         user_data = json.loads(request.body)
         email_user, password_user = user_data["email"], user_data["password"]
     except Exception as er:
-        return mess[400]
+        return mess[401]
 
     if not isinstance(email_user, str) or "@" not in email_user or not email_user.endswith((".com", ".ru", ".eu")):
-        return mess[400]
+        return mess[401]
     
     try:
         user = User.objects.get(email=email_user)
     except Exception as er:
-        return mess[404]
+        return mess[401]
                 
     # расшифровка пароля
     password = decrypt_string(user.password)
     print(user.id)
 
     if password != password_user:
-        return mess[400]
+        return mess[401]
     
     else:
         print(user.id)
@@ -122,13 +122,21 @@ def login(request) -> dict:
         return response
 
 
-def get_user_profile(request, profileId):
+def get_user_profile(request, profileId=''):
     cookie_user = Authorization.check_logining(request)
     
-    try:    
-        user_profile = User.objects.get(id=decrypt_string(profileId))
-    except Exception as er:
-        return mess[404]
+    if profileId:
+        try:    
+            user_profile = User.objects.get(id=profileId)
+        except Exception as er:
+            return mess[404]
+    
+    else:
+        if isinstance(cookie_user, dict):
+            return mess[401]
+        response = {"user": User.get_user_data_full(cookie_user)}
+        response['user']['email'] = cookie_user.email
+        return response
     
     response = {
         "user": User.get_user_data_full(user_profile)
@@ -163,7 +171,7 @@ def edit_user_profile(request, profileId):
         return mess[401]
     
     try:
-        user_profile = User.objects.get(id=decrypt_string(profileId))
+        user_profile = User.objects.get(id=profileId)
     except:
         return mess(404)
     
