@@ -146,3 +146,24 @@ def edit_post_by_id(request, post_id):
         return mess[500]
         
     return mess[200]
+
+
+def toggle_like(request, postID):
+    cookie_user = Authorization.check_logining(request)
+    
+    if isinstance(cookie_user, dict):
+        return mess[401]
+    
+    try: 
+        post = Post.objects.get(id=postID)
+        
+    except Exception as er:
+        return mess[404]
+    
+    if post.users_like.filter(id=cookie_user.id).exists():
+        post.users_like.remove(cookie_user)
+    
+    else:
+        post.users_like.add(cookie_user)
+        
+    return mess[200]

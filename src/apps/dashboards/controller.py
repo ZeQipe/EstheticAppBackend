@@ -135,4 +135,22 @@ def user_created_post_list(request, userID):
 
 
 def remove_posts_in_board(request, boardID):
-    pass
+    cookie_user = Authorization.check_logining(request)
+    
+    if isinstance(cookie_user, dict):
+        return mess[401]
+    
+    try:
+        postID = json.loads(request.body).get("postsId")
+        post = Post.objects.get(id=postID)
+        
+        board = Board.objects.get(id=boardID)
+    except Exception as er:
+        return mess[404]
+    
+    if not board.posts.filter(id=post.id).exists():
+        return mess[404]
+    
+    board.posts.remove()
+    
+    return mess[200]
