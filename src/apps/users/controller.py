@@ -210,8 +210,9 @@ def edit_user_profile(request, profileId):
     # Проверка наличия фото
     try:
         file = put_data[1].get('avatar')
-        url = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_profile.id}.jpg'
-        save_media(file, url)
+        path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_profile.id}.jpg'
+        url = Media.get_image_url(request, f'{user_profile.id}.jpg', "img")
+        Media.save_media(file, path)
     except:
         pass
         
