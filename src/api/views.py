@@ -61,7 +61,7 @@ def usersLogin(request):
         response = login(request)
 
         if response.get("userId", False):
-            cook_keys = response.get("userId")
+            cook_keys = encrypt_string(response.get("userId"))
             response = JsonResponse(response, status=200)
             response = Authorization.set_key_in_coockies(response, cook_keys)
 
