@@ -60,6 +60,7 @@ def registration_users(request) -> dict:
         path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
         url = Media.get_image_url(request, f'{user_id}.jpg', "img")
     else:
+        path = None
         url = None
         
     # Зашифровываем пароль
