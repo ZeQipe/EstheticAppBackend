@@ -1,9 +1,8 @@
 from .models import User
 from templates.response import templates as mess
 from service.authService import Authorization
-from utils.tools import generate_string, save_media
+from service.mediaService import Media
 from utils.separament import Parser as pars
-from utils.validator import *
 from utils.cripting import *
 from pathlib import Path
 from django.http.multipartparser import MultiPartParser
@@ -58,7 +57,8 @@ def registration_users(request) -> dict:
     # Проверка наличия фото
     file = request_data[1].get("avatar")
     if file:
-        url = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
+        path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
+        url = Media.get_image_url(request, f'{user_id}.jpg', "img")
     else:
         url = None
         
@@ -84,7 +84,7 @@ def registration_users(request) -> dict:
     except Exception as er:
         return mess[500]
     
-    save_media(file, url)
+    Media.save_media(file, path)
     return mess[200]
     
 

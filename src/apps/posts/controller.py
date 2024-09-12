@@ -5,7 +5,8 @@ from apps.posts.models import Post
 from utils.separament import Parser as pars
 from pathlib import Path
 from django.http.multipartparser import MultiPartParser
-from utils.tools import generate_string, save_media
+from utils.cripting import generate_string
+from service.mediaService import Media
 import json
 
 
@@ -43,12 +44,13 @@ def create_post(request):
         return mess[204]
     
     name_file = f"{post_data['id']}.{'jpg' if post_data['type_file'] == 'img' else 'mp4'}"
-    post_data["url"] = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'img' / name_file
+    post_data["url"] = Media.get_image_url(request, name_file, "img")
+    path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'img' / name_file
     
     # Отправляем в базу все данные
     try:
         post = Post.create_new_posts(post_data)
-        save_media(file, post_data["url"])
+        Media.save_media(file, path)
         return mess[200]
         
     except Exception as er:

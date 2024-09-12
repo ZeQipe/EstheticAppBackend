@@ -1,5 +1,4 @@
-from utils.tools import generate_string
-from utils.cripting import encrypt_string as encript
+from utils.cripting import generate_string
 from templates.response import templates as mess
 from apps.users.models import User
 from django.utils.dateformat import DateFormat

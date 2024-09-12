@@ -3,7 +3,7 @@ from apps.users.models import User
 from apps.posts.models import Post
 from django.db.models import Q
 from templates.response import templates as mess
-from utils.tools import generate_string
+from utils.cripting import generate_string
 from django.utils import timezone
 import json
 

@@ -4,7 +4,6 @@ from apps.users.models import User
 from templates.response import templates as mess
 from service.authService import Authorization
 from utils.separament import Parser as pars
-from utils.validator import *
 from utils.cripting import *
 import json
 

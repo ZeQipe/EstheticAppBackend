@@ -11,6 +11,7 @@ services:
       "
     volumes:
       - .:/app
+      - ./media:/app/media
     ports:
       - "8000:8000"
     environment:
