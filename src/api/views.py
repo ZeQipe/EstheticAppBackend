@@ -18,7 +18,7 @@ def users_param(request, profileID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -29,7 +29,7 @@ def publicProfile(request, userID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -40,7 +40,7 @@ def privateProfile(request):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 @csrf_exempt
 @require_http_methods(["POST"])
@@ -51,7 +51,7 @@ def usersRegistration(request):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -99,7 +99,7 @@ def usersCreatedPosts(request, userID):
     else:
         response = mess[405]
 
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -110,7 +110,7 @@ def users(request):
     else:
         response = mess[405]
 
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
      
 
 # ---------------------------- ---------------------------- ----------------------------
@@ -126,7 +126,7 @@ def posts(request):
     else:
         response = mess[405]
     
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -143,7 +143,7 @@ def posts_param(request, postID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 @csrf_exempt
 def postsToggleLike(request, postsID): 
@@ -153,7 +153,7 @@ def postsToggleLike(request, postsID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 # ---------------------------- ---------------------------- ----------------------------
@@ -167,7 +167,7 @@ def dashboards(request):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -179,7 +179,7 @@ def add_in_favorites(request):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -197,7 +197,7 @@ def dashboards_param(request, boardID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 @csrf_exempt
@@ -208,7 +208,7 @@ def dashboards_list(request, userID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
         
 
 
@@ -220,7 +220,7 @@ def dashboardsDeletePosts(request, boardID):
     else:
         response = mess[405]
         
-    return JsonResponse(response, status=mess.get("status", 200))
+    return JsonResponse(response, status=response.get("status", 200))
 
 
 # ---------------------------- ---------------------------- ----------------------------
@@ -230,11 +230,11 @@ def check_auth(request):
     if request.method == "GET":                                         # Check authorization from user
         if isinstance(Authorization.check_logining(request), dict):
             mess = {"isAuth": False}
-            response = JsonResponse(mess, status=mess.get("status", 401))
+            response = JsonResponse(mess, status=401)
         else:
             mess = {"isAuth": True}
-            response = JsonResponse(mess, status=mess.get("status", 200))
+            response = JsonResponse(mess, status=200)
     else:
-        response = JsonResponse(mess[405], status=mess[405])
+        response = JsonResponse(mess[405], status=405)
         
     return response

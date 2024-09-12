@@ -135,6 +135,7 @@ def get_user_profile(request, profileId=''):
     else:
         if isinstance(cookie_user, dict):
             return mess[401]
+        
         response = {"user": User.get_user_data_full(cookie_user)}
         response['user']['email'] = cookie_user.email
         return response
