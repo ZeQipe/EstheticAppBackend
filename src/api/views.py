@@ -183,7 +183,6 @@ def add_in_favorites(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
 def dashboards_param(request, boardID): 
     if request.method == "GET":                                         # Get all information by board
         response = get_dashboard_detail(request, boardID)

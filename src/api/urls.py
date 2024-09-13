@@ -21,7 +21,7 @@ urlpatterns = [
     path("dashboards", views.dashboards, name='dashboards'),
     path("dashboards/favorites", views.add_in_favorites, name="add_in_favorites"),
     path("dashboards/delete-posts/<str:boardID>", views.dashboardsDeletePosts, name="dashboardsDeletePosts"),
-    path("dashboards/<str:boadID>", views.dashboards_param, name="dashboards_param"),
+    path("dashboards/<str:boardID>", views.dashboards_param, name="dashboards_param"),
     path("dashboards/<str:userID>/list", views.dashboards_list, name="dashboards_param"),
     
     # Other
