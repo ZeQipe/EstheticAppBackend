@@ -58,7 +58,7 @@ def registration_users(request) -> dict:
     file = request_data[1].get("avatar")
     if file:
         path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
-        url = Media.get_image_url(request, f'{user_id}.jpg', "avatar")
+        url = Media.get_image_url(request, f'{user_id}.jpg', "avatars")
     else:
         path = None
         url = None
