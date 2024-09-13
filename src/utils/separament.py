@@ -158,7 +158,7 @@ class Parser:
                     "dateOfCreation": formatted_date,
                     "url": url
             }
-        print(boards )
+
         # Обработка всех остальных досок (если есть)
         for board in boards[start:start+end:]:
             created_at = board.created_at
