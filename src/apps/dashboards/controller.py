@@ -154,3 +154,14 @@ def remove_posts_in_board(request, boardID):
     board.posts.remove()
     
     return mess[200]
+
+
+def get_boards_user(request):
+    cookie_user = Authorization.check_logining(request)
+    
+    if isinstance(cookie_user, dict):
+        return mess[401]
+    
+    response = pars.parse_dashboard_list(cookie_user)
+
+    return response

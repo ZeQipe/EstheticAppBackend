@@ -159,9 +159,11 @@ def postsToggleLike(request, postsID):
 # ---------------------------- ---------------------------- ----------------------------
 # Методы Досок
 @csrf_exempt
-@require_http_methods(["POST"])
 def dashboards(request): 
-    if request.method == "POST":                                        # Create board
+    if request.method == "GET":
+        response = get_boards_user(request)
+
+    elif request.method == "POST":                                        # Create board
         response = create_dashboards(request)
 
     else:

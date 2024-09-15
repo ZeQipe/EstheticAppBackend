@@ -177,3 +177,30 @@ class Parser:
             })
         
         return data
+    
+
+    @staticmethod
+    def parse_dashboard_lis(user):
+        response = {
+            "dashboardsAmount": user.boards.count(),
+            "favorites": None,
+            "dashboards": None
+        }
+
+        # Получение 
+        favorites_board = user.boards.filter(name="Избранное").first()
+
+        # Получение всех досок пользователя, кроме "Избранное"
+        boards = user.boards.exclude(name="Избранное")
+        
+        if favorites_board:
+            response["favorites"] = {favorites_board.posts.last()} 
+
+        for board in boards:
+            response["dashboards"].append({
+            "dashboardId": board.id,
+            "dashboardName": board.name,
+            "url": favorites_board.posts.last()
+            })
+
+        return response
