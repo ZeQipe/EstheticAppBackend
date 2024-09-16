@@ -180,7 +180,7 @@ class Parser:
     
 
     @staticmethod
-    def parse_dashboard_lis(user):
+    def parse_dashboard_list(user, start, end):
         response = {
             "dashboardsAmount": user.boards.count(),
             "favorites": None,
@@ -196,7 +196,7 @@ class Parser:
         if favorites_board:
             response["favorites"] = {favorites_board.posts.last()} 
 
-        for board in boards:
+        for board in boards[start:start+end:]:
             response["dashboards"].append({
             "dashboardId": board.id,
             "dashboardName": board.name,
@@ -204,3 +204,20 @@ class Parser:
             })
 
         return response
+    
+    
+    @staticmethod
+    def pars_dashboards_info_in(boards):
+        data = {
+            "inFavorites": False,
+            "inDashboards": []
+            }
+        
+        for board in boards:
+            if board.name == "Избранное":
+                data["inFavorites"] = True
+                continue
+
+            data["inDashboards"].append(board.id)
+
+        return data

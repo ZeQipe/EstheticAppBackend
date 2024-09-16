@@ -19,6 +19,7 @@ urlpatterns = [
     
     # DASHBOARDS
     path("dashboards", views.dashboards, name='dashboards'),
+    path("dashboards/check-posts", views.post_in_boards, name="post_in_boards"),
     path("dashboards/favorites", views.add_in_favorites, name="add_in_favorites"),
     path("dashboards/delete-posts/<str:boardID>", views.dashboardsDeletePosts, name="dashboardsDeletePosts"),
     path("dashboards/<str:boardID>", views.dashboards_param, name="dashboards_param"),

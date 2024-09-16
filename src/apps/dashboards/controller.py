@@ -156,12 +156,44 @@ def remove_posts_in_board(request, boardID):
     return mess[200]
 
 
-def get_boards_user(request):
+def check_post_in_boards(request):
     cookie_user = Authorization.check_logining(request)
     
     if isinstance(cookie_user, dict):
         return mess[401]
     
-    response = pars.parse_dashboard_list(cookie_user)
+    try:
+        postID = int(request.GET.get("postid", "None"))
+        post = Post.objects.get(id=postID)
+
+    except Exception as er:
+        return mess[404]
+    
+    boards = post.boards.filter(author=cookie_user)
+
+    return pars.pars_dashboards_info_in(boards)
+    
+
+
+
+def get_boards_user_by_cookie(request):
+    cookie_user = Authorization.check_logining(request)
+    
+    if isinstance(cookie_user, dict):
+        return mess[401]
+    
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+
+    try:
+        limit = int(request.GET.get('limit', 20))
+    except ValueError:
+        limit = 20
+
+    response = pars.parse_dashboard_list(cookie_user, offset, limit)
 
     return response
+
+

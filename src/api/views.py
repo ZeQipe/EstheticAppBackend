@@ -160,8 +160,8 @@ def postsToggleLike(request, postsID):
 # Методы Досок
 @csrf_exempt
 def dashboards(request): 
-    if request.method == "GET":
-        response = get_boards_user(request)
+    if request.method == "GET":                                           # Get compact board list 
+        response = get_boards_user_by_cookie(request)
 
     elif request.method == "POST":                                        # Create board
         response = create_dashboards(request)
@@ -218,6 +218,17 @@ def dashboardsDeletePosts(request, boardID):
     if request.method == "DELETE":                                      # Delete post in board
         response = remove_posts_in_board(request, boardID)
     
+    else:
+        response = mess[405]
+        
+    return JsonResponse(response, status=response.get("status", 200))
+
+
+@csrf_exempt
+def post_in_boards(request):
+    if request.method == "GET":
+        response = check_post_in_boards(request)
+
     else:
         response = mess[405]
         
