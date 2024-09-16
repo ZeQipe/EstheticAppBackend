@@ -89,7 +89,7 @@ def search_posts(request):
     if not result:
         return mess[404]
 
-    response = pars.parse_posts(result)
+    response = pars.parse_posts(result, offset, limit)
     return response
 
 
@@ -160,10 +160,10 @@ def toggle_like(request, postID):
     except Exception as er:
         return mess[404]
     
-    if post.users_like.filter(id=cookie_user.id).exists():
-        post.users_like.remove(cookie_user)
+    if post.users_liked.filter(id=cookie_user.id).exists():
+        post.users_liked.remove(cookie_user)
     
     else:
-        post.users_like.add(cookie_user)
+        post.users_liked.add(cookie_user)
         
     return mess[200]

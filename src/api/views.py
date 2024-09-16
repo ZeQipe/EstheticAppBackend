@@ -146,9 +146,9 @@ def posts_param(request, postID):
     return JsonResponse(response, status=response.get("status", 200))
 
 @csrf_exempt
-def postsToggleLike(request, postsID): 
+def postsToggleLike(request, postID): 
     if request.method == "PUT":                                         # set like post
-        response = toggle_like(request, postsID)
+        response = toggle_like(request, postID)
     
     else:
         response = mess[405]

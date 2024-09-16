@@ -14,7 +14,7 @@ class DeletterObject:
         if isinstance(cookie_user, dict):
             return mess[401]
         
-        elif isinstance(model, User):
+        elif model == User:
             cookie_user.delete()
         
         else:

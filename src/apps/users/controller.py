@@ -138,7 +138,7 @@ def get_user_profile(request, profileId=''):
         
         response = {"user": User.get_user_data_full(cookie_user)}
         response['user']['email'] = cookie_user.email
-        return response
+        return response['user']
     
     response = {
         "user": User.get_user_data_full(user_profile)
@@ -175,7 +175,7 @@ def edit_user_profile(request, profileId):
     try:
         user_profile = User.objects.get(id=profileId)
     except:
-        return mess(404)
+        return mess[404]
     
     if cookie_user.id != user_profile.id:
         return mess[403]
@@ -227,3 +227,27 @@ def edit_user_profile(request, profileId):
     return mess[200]
         
 
+def user_created_post_list(request, userID):
+
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+
+    try:
+        limit = int(request.GET.get('limit', 20))
+    except ValueError:
+        limit = 20
+
+    user = User.objects.get(id=userID)
+    
+    if isinstance(user, dict):
+        response = mess[404].copy()
+        response['message'] = "Not found User"
+        return response
+    
+    posts_user = user.posts.all()
+
+    response = pars.parse_posts(posts_user, offset, limit)
+    
+    return response

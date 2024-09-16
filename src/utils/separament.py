@@ -40,17 +40,17 @@ class Parser:
 
 
     @staticmethod
-    def parse_posts(result) -> list[dict]:
+    def parse_posts(result, start, end) -> list[dict]:
         """
         Парсит результат и формирует список постов в нужном формате.
         :param result: результат запроса
         :param columns: список колонок
         :return: список отформатированных постов
         """
-        formatted_posts = {"postsAmount": len(result),
+        formatted_posts = {"postsAmount": 0,
                         "posts": []}
         
-        for post in result:
+        for post in result[start:start+end:]:
             post = {
                 "postId": post.id,
                 "contentType": post.type_content,
@@ -61,6 +61,8 @@ class Parser:
                     }
             }
             formatted_posts["posts"].append(post)
+        
+        formatted_posts["postsAmount"] = len(formatted_posts["posts"])
 
         return formatted_posts
 
@@ -184,7 +186,7 @@ class Parser:
         response = {
             "dashboardsAmount": user.boards.count(),
             "favorites": None,
-            "dashboards": None
+            "dashboards": []
         }
 
         # Получение 
@@ -192,15 +194,16 @@ class Parser:
 
         # Получение всех досок пользователя, кроме "Избранное"
         boards = user.boards.exclude(name="Избранное")
-        
+        print(favorites_board)  
         if favorites_board:
-            response["favorites"] = {favorites_board.posts.last()} 
+            response["favorites"] = {"image":favorites_board.posts.last().id}
+            response["dashboardsAmount"] = response["dashboardsAmount"] - 1
 
         for board in boards[start:start+end:]:
             response["dashboards"].append({
             "dashboardId": board.id,
             "dashboardName": board.name,
-            "url": favorites_board.posts.last()
+            "url": board.posts.last()
             })
 
         return response
@@ -212,6 +215,8 @@ class Parser:
             "inFavorites": False,
             "inDashboards": []
             }
+            
+        print(data)  
         
         for board in boards:
             if board.name == "Избранное":

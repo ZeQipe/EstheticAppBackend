@@ -119,21 +119,6 @@ def get_user_dashboards(request, user_id):
     return response
 
 
-def user_created_post_list(request, userID):
-    user = User.objects.get(id=userID)
-    
-    if isinstance(user, dict):
-        response = mess[404].copy()
-        response['message'] = "Not found User"
-        return response
-    
-    posts_user = user.posts.all()
-
-    response = pars.parse_posts(posts_user)
-    
-    return response
-
-
 def remove_posts_in_board(request, boardID):
     cookie_user = Authorization.check_logining(request)
     
@@ -151,7 +136,7 @@ def remove_posts_in_board(request, boardID):
     if not board.posts.filter(id=post.id).exists():
         return mess[404]
     
-    board.posts.remove()
+    board.posts.remove(post)
     
     return mess[200]
 
@@ -163,7 +148,7 @@ def check_post_in_boards(request):
         return mess[401]
     
     try:
-        postID = int(request.GET.get("postid", "None"))
+        postID = request.GET.get("postid", "None")
         post = Post.objects.get(id=postID)
 
     except Exception as er:
