@@ -148,6 +148,7 @@ class Parser:
         if favorites_board:
             created_at = favorites_board.created_at
             formatted_date = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
+            data["dashboardsAmount"] = data["dashboardsAmount"] - 1
             
             url = []
             for i in favorites_board.posts.all():
@@ -194,17 +195,19 @@ class Parser:
 
         # Получение всех досок пользователя, кроме "Избранное"
         boards = user.boards.exclude(name="Избранное")
-        print(favorites_board)  
+
         if favorites_board:
-            response["favorites"] = {"image":favorites_board.posts.last().id}
+            response["favorites"] = {"image": favorites_board.posts.last().id}
             response["dashboardsAmount"] = response["dashboardsAmount"] - 1
 
         for board in boards[start:start+end:]:
-            response["dashboards"].append({
+            data = {
             "dashboardId": board.id,
             "dashboardName": board.name,
-            "url": board.posts.last()
-            })
+            "url": board.posts.last().url if board.posts.all() else None
+                    }
+            
+            response["dashboards"].append(data)
 
         return response
     

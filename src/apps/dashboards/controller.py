@@ -178,6 +178,7 @@ def get_boards_user_by_cookie(request):
         limit = 20
 
     response = pars.parse_dashboard_list(cookie_user, offset, limit)
+    print(response )
 
     return response
 
