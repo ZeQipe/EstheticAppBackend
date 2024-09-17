@@ -197,7 +197,7 @@ class Parser:
         boards = user.boards.exclude(name="Избранное")
 
         if favorites_board:
-            response["favorites"] = {"image": favorites_board.posts.last().id}
+            response["favorites"] = {"url": favorites_board.posts.last().url}
             response["dashboardsAmount"] = response["dashboardsAmount"] - 1
 
         for board in boards[start:start+end:]:
