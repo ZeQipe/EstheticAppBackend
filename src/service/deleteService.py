@@ -27,6 +27,10 @@ class DeletterObject:
             if cookie_user.id != target.author.id:
                 return mess[403]
             
+            if model == Board:
+                if target.name == "Избранное":
+                    return mess[403]
+
             target.delete()
             
         return mess[200]

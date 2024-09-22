@@ -173,18 +173,6 @@ def dashboards(request):
 
 
 @csrf_exempt
-@require_http_methods(["POST"])
-def add_in_favorites(request):
-    if request.method == "POST":                                        # Add post in board "Favorites"
-        response = add_post_in_board(request, "favorites")
-
-    else:
-        response = mess[405]
-        
-    return JsonResponse(response, status=response.get("status", 200))
-
-
-@csrf_exempt
 def dashboards_param(request, boardID): 
     if request.method == "GET":                                         # Get all information by board
         response = get_dashboard_detail(request, boardID)

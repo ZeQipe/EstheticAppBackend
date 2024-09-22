@@ -46,19 +46,10 @@ def add_post_in_board(request, board_id):
         return mess[401]
     
     # Поиск доски в базе данных
-    if board_id == "favorites":
-        try:
-            board = Board.objects.get(author_id=cookie_user.id, name="Избранное")
-        except Exception as er:
-            try:
-                board = Board.create_board("Избранное", cookie_user)
-            except Exception as er:
-                return mess[500]
-    else:
-        try:
-            board = Board.objects.get(id=board_id, author=cookie_user)
-        except Exception as er:
-            return mess[404]
+    try:
+        board = Board.objects.get(id=board_id, author=cookie_user)
+    except Exception as er:
+        return mess[404]
     
     # Поиск поста в базе данных
     data = json.loads(request.body)
@@ -79,13 +70,23 @@ def add_post_in_board(request, board_id):
         
     
 def get_dashboard_detail(request, id_board):
+    try:
+        offset = int(request.GET.get('offset', 0))
+    except ValueError:
+        offset = 0
+
+    try:
+        limit = int(request.GET.get('limit', 20))
+    except ValueError:
+        limit = 20
+
     # Поиск доски в базе данных
     try:
         board = Board.objects.get(id=id_board)
     except Exception as er:
         return mess[404]
     
-    response = pars.parse_dashboard(board)
+    response = pars.parse_dashboard(board, offset, limit)
     
     return response
 
@@ -157,8 +158,6 @@ def check_post_in_boards(request):
     boards = post.boards.filter(author=cookie_user)
 
     return pars.pars_dashboards_info_in(boards)
-    
-
 
 
 def get_boards_user_by_cookie(request):
@@ -178,7 +177,6 @@ def get_boards_user_by_cookie(request):
         limit = 20
 
     response = pars.parse_dashboard_list(cookie_user, offset, limit)
-    print(response )
 
     return response
 

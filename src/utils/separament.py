@@ -104,7 +104,7 @@ class Parser:
 
 
     @staticmethod
-    def parse_dashboard(board):
+    def parse_dashboard(board, offset, limit):
         # Получение и форматирование даты создания доски
         created_at = board.created_at
         formatted_date = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
@@ -112,7 +112,7 @@ class Parser:
         all_posts = board.posts.all()
         
         # Получение и форматирование постов
-        posts = Parser.parse_posts(all_posts)
+        posts = Parser.parse_posts(all_posts, offset, limit)
         
         # Получение данных поста
         data = {
@@ -151,7 +151,7 @@ class Parser:
             data["dashboardsAmount"] = data["dashboardsAmount"] - 1
             
             url = []
-            for i in favorites_board.posts.all():
+            for i in reversed(favorites_board.posts.all()):
                 url.append(i.url)
             
             data["favorites"] = {
@@ -159,26 +159,27 @@ class Parser:
                     "dashboardName": favorites_board.name,
                     "postsAmount": favorites_board.posts.count(),
                     "dateOfCreation": formatted_date,
-                    "url": url
+                    "url": url[:2:]
             }
 
+        if boards:
         # Обработка всех остальных досок (если есть)
-        for board in boards[start:start+end:]:
-            created_at = board.created_at
-            formatted_date = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
+            for board in boards[start:start+end:]:
+                created_at = board.created_at
+                formatted_date = DateFormat(created_at.astimezone(get_current_timezone())).format('Y-m-d\TH:i:sP')
+                
+                url = []
+                for i in reversed(board.posts.all()):
+                    url.append(i.url)
+                
+                data["dashboards"].append({
+                        "dashboardId": board.id,
+                        "dashboardName": board.name,
+                        "postsAmount": board.posts.count(),
+                        "dateOfCreation": formatted_date,
+                        "url": url[:5:]
+                })
             
-            url = []
-            for i in reversed(board.posts.all()):
-                url.append(i.url)
-            
-            data["dashboards"].append({
-                    "dashboardId": board.id,
-                    "dashboardName": board.name,
-                    "postsAmount": board.posts.count(),
-                    "dateOfCreation": formatted_date,
-                    "url": url
-            })
-        
         return data
     
 
@@ -197,17 +198,21 @@ class Parser:
         boards = user.boards.exclude(name="Избранное")
 
         if favorites_board:
-            response["favorites"] = {"url": favorites_board.posts.last().url if favorites_board.posts.all() else None}
+            response["favorites"] = {
+                "dashboardId": favorites_board.id,
+                "url": favorites_board.posts.order_by('?').first().url if favorites_board.posts.all() else None}
+            
             response["dashboardsAmount"] = response["dashboardsAmount"] - 1
 
-        for board in boards[start:start+end:]:
-            data = {
-            "dashboardId": board.id,
-            "dashboardName": board.name,
-            "url": board.posts.last().url if board.posts.all() else None
-                    }
-            
-            response["dashboards"].append(data)
+        if boards:
+            for board in boards[start:start+end:]:
+                data = {
+                "dashboardId": board.id,
+                "dashboardName": board.name,
+                "url": board.posts.order_by('?').first().url if board.posts.all() else None
+                        }
+                
+                response["dashboards"].append(data)
 
         return response
     
@@ -217,9 +222,7 @@ class Parser:
         data = {
             "inFavorites": False,
             "inDashboards": []
-            }
-            
-        print(data)  
+            } 
         
         for board in boards:
             if board.name == "Избранное":
