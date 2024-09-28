@@ -201,7 +201,13 @@ def edit_user_profile(request):
     # Подготовка тэгов
     pack_tags_json = request.POST.get("tags")
     if pack_tags_json:
-        pack_tags = json.loads(pack_tags_json)
+        try:
+            pack_tags = json.loads(pack_tags_json)
+        except:
+            response = mess[400]
+            response['message'] = f'Bad request. Invalid value for tags'
+            return False, response
+        
         tags = pars.packing_tags(pack_tags)
         cookie_user.tags_user = tags
 

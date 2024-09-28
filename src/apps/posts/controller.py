@@ -123,25 +123,43 @@ def edit_post_by_id(request, post_id):
     
     # Получаем данные для редактирования
     request_data = MultiPartParser(request.META, request, request.upload_handlers).parse()
-    post_data = Post.get_data_in_request(request_data[0])
+    post_data = {
+                "postName": request_data[0].get("name"),
+                "description": request_data[0].get("description"),
+                "link": request_data[0].get("link"),
+                "aspectRatio": request_data[0].get("aspectRatio")
+                }
     
+    if post_data["postName"]:
+        if len(post_data["postName"]) <= 20:
+            post.post_name = post_data["postName"]
+
+    if post_data["description"]:
+        if len(post_data["description"]) <= 100:
+            post.description = post_data["description"]
+        else:
+            response = mess[400]
+            response['message'] = f'Bad request. Invalid value for name Post'
+            return False, response
+        
+    if post_data["link"]:
+        if len(post_data["link"]) <= 100:
+            post.link = post_data["link"]
+        else:
+            response = mess[400]
+            response['message'] = f'Bad request. Invalid value for link'
+            return False, response
+        
+    if post_data["aspectRatio"]:
+        post.aspect_ratio = post_data["aspectRatio"]
+
     # Подготовка тэгов
     pack_tags_json = request_data[0].get("tags")
     if pack_tags_json:
-        post_data["tags"] = pars.packing_tags(json.loads(pack_tags_json))
-    else:
-        post_data["tags"] = []
-    
-    # Валидация данных для создания постов
-    result_validate, message_validate = Post.validate_post_data(post_data)
-    if not result_validate:
-        return message_validate
+        tags = pars.packing_tags(json.loads(pack_tags_json))
+        post.tags_list = tags
 
-    # Отправляем в базу все данные
-    try:
-        Post.edit_post(post, post_data)
-    except Exception as er:
-        return mess[500]
+    post.save()
         
     return mess[200]
 
