@@ -11,17 +11,6 @@ from apps.dashboards.controller import *
 
 # Методы работы с пользователем
 @csrf_exempt
-def users_param(request, profileID): 
-    if request.method == "PUT":                                         # Changing user profile by userID
-        response = edit_user_profile(request, profileID)
-    
-    else:
-        response = mess[405]
-        
-    return JsonResponse(response, status=response.get("status", 200))
-
-
-@csrf_exempt
 def publicProfile(request, userID):
     if request.method == "GET":                                         # Get Public profile by userID
         response = get_user_profile(request, userID)
@@ -106,6 +95,9 @@ def usersCreatedPosts(request, userID):
 def users(request):
     if request.method == "DELETE":                                      # Delete object
         response = deletter.del_object(request, User)
+
+    elif request.method == "PUT":
+        response = edit_user_profile(request)                           # Edit User Profile
     
     else:
         response = mess[405]

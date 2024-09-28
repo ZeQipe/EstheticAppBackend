@@ -39,7 +39,7 @@ class User(models.Model):
         """
         regex_patterns = {
             'first_name': r'^.{2,15}$',
-            'last_name': r'^.{3,15}$',
+            'last_name': r'^.{0,15}$',
             'user_name': r'^.{5,20}$',
             'email': r'^[\w\.-]+@[\w\.-]+\.\w{2,30}$',
         }
@@ -92,7 +92,7 @@ class User(models.Model):
     
     @staticmethod
     def get_data_in_request(data: dict):
-        return {'first_name': data["firstName"],
+        return {'first_name': data.get("firstName"),
                  'last_name': data.get("lastName"), 
-                 'user_name' : data["userName"], 
-                 'email' : data["email"]}
+                 'user_name' : data.get("userName"), 
+                 'email' : data.get("email")}

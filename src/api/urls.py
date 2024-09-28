@@ -15,7 +15,6 @@ urlpatterns = [
     path("users/private-profile", views.privateProfile, name="privateProfile"),
     path("users/public-profile/<str:userID>", views.publicProfile, name="publicProfile"),
     path("users/<str:userID>/created-posts", views.usersCreatedPosts, name="userCreatedPosts"),
-    path("users/<str:profileID>", views.users_param, name="users_param"),
     
     # DASHBOARDS
     path("dashboards", views.dashboards, name='dashboards'),

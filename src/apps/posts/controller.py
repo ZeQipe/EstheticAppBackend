@@ -38,18 +38,17 @@ def create_post(request):
     # Данные о файле
     file = request_data[1].get('file')
     if file:
-        if file.content_type.startswith('image/'):
-            post_data["type_file"] = "img"
+        post_data["type_file"] = "img"
+        name_file = f"{post_data['id']}.{'jpg' if post_data['type_file'] == 'img' else 'mp4'}"
+        post_data["url"] = Media.get_image_url(request, name_file, "img")
+        path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'img' / name_file
+    
     else:
         return mess[204]
     
-    name_file = f"{post_data['id']}.{'jpg' if post_data['type_file'] == 'img' else 'mp4'}"
-    post_data["url"] = Media.get_image_url(request, name_file, "img")
-    path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'img' / name_file
-    
     # Отправляем в базу все данные
     try:
-        post = Post.create_new_posts(post_data)
+        Post.create_new_posts(post_data)
         Media.save_media(file, path)
         return mess[200]
         
@@ -142,7 +141,6 @@ def edit_post_by_id(request, post_id):
     try:
         Post.edit_post(post, post_data)
     except Exception as er:
-        print(er )
         return mess[500]
         
     return mess[200]

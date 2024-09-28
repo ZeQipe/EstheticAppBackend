@@ -11,13 +11,12 @@ class Post(models.Model):
     id = models.CharField(max_length=40, primary_key=True)
     author = models.ForeignKey(User, related_name='posts', on_delete=models.CASCADE)
     post_name = models.CharField(max_length=20)
-    description = models.CharField(max_length=50, blank=True, null=True)
+    description = models.CharField(max_length=100, blank=True, null=True)
     users_liked = models.ManyToManyField(User, related_name='liked_posts', blank=True)
     type_content = models.TextField()
     url = models.TextField(unique=True)
     tags_list = models.JSONField(default=list)
     aspect_ratio = models.TextField(blank=True, null=True)
-    object_position = models.TextField(blank=True, null=True)
     link = models.CharField(max_length=100)
     
     
@@ -76,12 +75,11 @@ class Post(models.Model):
     
     @staticmethod
     def edit_post(post, new_data):
-        post.post_name = new_data['postName']
-        post.description = new_data['description']
-        post.link = new_data['link']
-        post.aspect_ratio = new_data['aspectRatio']
-        post.object_position = new_data['objectPosition']
-        post.tags_list = new_data["tags"]
+        post.post_name = new_data['postName'] if new_data.get('postName', None) else post.post_name
+        post.description = new_data['description'] if new_data.get('description', None) else post.description
+        post.link = new_data['link'] if new_data.get('link', None) else post.link
+        post.aspect_ratio = new_data['aspectRatio'] if new_data.get('aspectRatio', None) else post.aspect_ratio
+        post.tags_list = new_data["tags"] if new_data.get('tags', None) else post.tags_list
         
         post.save()
 
@@ -95,15 +93,13 @@ class Post(models.Model):
         """
         regex_patterns = {
             'post_name': r'^.{2,20}$',
-            'description': r'^.{0,50}$',  # Допускает пустую строку или строку до 50 символов
+            'description': r'^.{0,100}$',  # Допускает пустую строку или строку до 100 символов
             'aspect_ratio': r'^.*$',  # Любая строка
-            'object_position': r'^.*$',  # Любая строка
         }
         
-        checking_data = [post_data['postName'], post_data['description'], 
-                         post_data['aspectRatio'], post_data['objectPosition']]
+        checking_data = [post_data['postName'], post_data['description'], post_data['aspectRatio']]
 
-        field_names = ['post_name', 'description', 'aspect_ratio', 'object_position']
+        field_names = ['post_name', 'description', 'aspect_ratio']
 
         for i, field in enumerate(field_names):
             value = checking_data[i]
@@ -136,7 +132,6 @@ class Post(models.Model):
                                 url=user_data["url"],  # URL файла на сервере
                                 tags_list=user_data["tags"], # Список комментариев
                                 aspect_ratio=user_data["aspectRatio"], # параметр, которые передается с фронта
-                                object_position=user_data["objectPosition"], # Позиция изображения
                                 link=user_data["link"] # Ссылка для сохранения
                                 )
         
@@ -145,12 +140,9 @@ class Post(models.Model):
     
     @staticmethod
     def get_data_in_request(data):
-        fileOptions = json.loads(data.get("fileOptions"))
-
         return {
                 "postName": data.get("name"),
                 "description": data.get("description"),
                 "link": data.get("link"),
-                "aspectRatio": fileOptions.get("aspectRatio"),
-                "objectPosition": fileOptions.get("objectPosition")
+                "aspectRatio": data.get("aspectRatio")
                 }

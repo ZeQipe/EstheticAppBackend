@@ -19,7 +19,7 @@ class Parser:
             
         tag_response = []
         for i in range(len(id_list)):
-            tag_dict = {"id" : id_list[i],
+            tag_dict = {"tagId" : id_list[i],
                         "label" : tags[i]}
             
             tag_response.append(tag_dict)
@@ -55,11 +55,9 @@ class Parser:
                 "postId": post.id,
                 "contentType": post.type_content,
                 "url": post.url,
-                "options": {
-                    "aspectRatio": post.aspect_ratio,
-                    "objectPosition": post.object_position
-                    }
+                "aspectRatio": post.aspect_ratio,
             }
+
             formatted_posts["posts"].append(post)
         
         formatted_posts["postsAmount"] = len(formatted_posts["posts"])
@@ -78,13 +76,10 @@ class Parser:
                     "media": {
                         "type": post.type_content,
                         "url": post.url,
-                        "options": {
-                            "aspectRatio": post.aspect_ratio,
-                            "objectPosition": post.object_position
-                                    }
+                        "aspectRatio": post.aspect_ratio,
                             },
                     "likeCount": post.users_liked.count(),
-                    "commentsCount": 0,
+                    "commentsCount": post.comments.count(),
                     "tags": Parser.unpacking_tags(post.tags_list),
                     "author": {
                         "firstName": post.author.first_name,

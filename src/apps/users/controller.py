@@ -33,6 +33,7 @@ def registration_users(request) -> dict:
     try:
         user_data = User.get_data_in_request(request_data[0])
         user_data["password"] = request_data[0].get("password")
+
     except Exception as error:
         return mess[400]
     
@@ -51,6 +52,7 @@ def registration_users(request) -> dict:
     if pack_tags_json:
         pack_tags = json.loads(pack_tags_json)
         tags = pars.packing_tags(pack_tags)
+
     else:
         tags = []
     
@@ -59,6 +61,7 @@ def registration_users(request) -> dict:
     if file:
         path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_id}.jpg'
         url = Media.get_image_url(request, f'{user_id}.jpg', "avatars")
+
     else:
         path = None
         url = None
@@ -66,6 +69,7 @@ def registration_users(request) -> dict:
     # Зашифровываем пароль
     try:
         cripto_password = encrypt_string(user_data.get("password"))
+
     except Exception as er:
         return mess[400]
     
@@ -99,6 +103,7 @@ def login(request) -> dict:
     try:
         user_data = json.loads(request.body)
         email_user, password_user = user_data["email"], user_data["password"]
+
     except Exception as er:
         return mess[401]
 
@@ -107,18 +112,16 @@ def login(request) -> dict:
     
     try:
         user = User.objects.get(email=email_user)
+
     except Exception as er:
         return mess[401]
                 
     # расшифровка пароля
     password = decrypt_string(user.password)
-    print(user.id)
-
     if password != password_user:
         return mess[401]
     
     else:
-        print(user.id)
         response = User.get_user_data_full(user)
         return response
 
@@ -129,6 +132,7 @@ def get_user_profile(request, profileId=''):
     if profileId:
         try:    
             user_profile = User.objects.get(id=profileId)
+
         except Exception as er:
             return mess[404]
     
@@ -160,75 +164,61 @@ def get_user_profile(request, profileId=''):
     else:
         response['guest'] = {
             "isOwner" : False,
-            # Доработать - "isSubscribe": True if not isinstance(cookie_user, dict) and cookie_user.id in user_profile.subscribers else False 
+            "isSubscribe": not isinstance(cookie_user, dict) and cookie_user in user_profile.subscribers
         }
         
     return response
     
 
-def edit_user_profile(request, profileId):
+def edit_user_profile(request):
     cookie_user = Authorization.check_logining(request)
     
     if isinstance(cookie_user, dict):
         return mess[401]
     
-    try:
-        user_profile = User.objects.get(id=profileId)
-    except:
-        return mess[404]
-    
-    if cookie_user.id != user_profile.id:
-        return mess[403]
-    
-    put_data = MultiPartParser(request.META, request, request.upload_handlers).parse()
-    
     # Получение данных из запроса
-    user_data = User.get_data_in_request(put_data[0])
+    put_data = MultiPartParser(request.META, request, request.upload_handlers).parse()
+    user_data = {'first_name': put_data[0].get("firstName"),
+                 'last_name': put_data[0].get("lastName"), 
+                 'user_name' : put_data[0].get("userName")
+                 }
 
     # Валидация данных
-    validate, message_validate = User.validate_data(user_data)
-    if not validate:
-        return message_validate
-    
-    # Проверка на уникальность в базе данных
-    if user_data['user_name'] != user_profile.user_name:
+    if user_data['first_name'] and len(user_data["first_name"]) <= 15 and len(user_data["first_name"]) >= 2:
+        cookie_user.first_name = user_data["first_name"]
+
+    if user_data["last_name"] and len(user_data["last_name"]) <= 20:
+        cookie_user.last_name = user_data["last_name"]
+
+    if user_data["user_name"]:
         if User.objects.filter(user_name=user_data["user_name"]).exists():
-            response = mess[400]
+            response = mess[400].copy()
             response['message'] = response['message'] + f'. The Username is busy'
             return response
         else:
-            user_profile.user_name = user_data['user_name']
+            cookie_user.user_name = user_data['user_name']
     
     # Подготовка тэгов
     pack_tags_json = request.POST.get("tags")
     if pack_tags_json:
         pack_tags = json.loads(pack_tags_json)
         tags = pars.packing_tags(pack_tags)
-    else:
-        tags = []
-        
-    ## Замена данных
+        cookie_user.tags_user = tags
+
     # Проверка наличия фото
     try:
         file = put_data[1].get('avatar')
-        path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{user_profile.id}.jpg'
-        url = Media.get_image_url(request, f'{user_profile.id}.jpg', "img")
+        path = Path(__file__).resolve().parent.parent.parent.parent / 'media' / 'avatars' / f'{cookie_user.id}.jpg'
         Media.save_media(file, path)
+
     except:
         pass
-        
-    user_profile.first_name = user_data['first_name']
-    user_profile.last_name = user_data['last_name']
     
-    if tags:
-        user_profile.tags_user = tags
-    
-    user_profile.save()
+    cookie_user.save()
     return mess[200]
         
 
 def user_created_post_list(request, userID):
-
     try:
         offset = int(request.GET.get('offset', 0))
     except ValueError:
@@ -238,10 +228,10 @@ def user_created_post_list(request, userID):
         limit = int(request.GET.get('limit', 20))
     except ValueError:
         limit = 20
-
-    user = User.objects.get(id=userID)
     
-    if isinstance(user, dict):
+    try:
+        user = User.objects.get(id=userID)
+    except Exception as er:
         response = mess[404].copy()
         response['message'] = "Not found User"
         return response
