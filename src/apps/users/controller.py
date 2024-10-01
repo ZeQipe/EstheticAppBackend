@@ -142,6 +142,7 @@ def get_user_profile(request, profileId=''):
         
         response = {"user": User.get_user_data_full(cookie_user)}
         response['user']['email'] = cookie_user.email
+        response['user']['tags'] = pars.unpacking_tags(cookie_user.tags_user)
         return response['user']
     
     response = {
@@ -199,7 +200,7 @@ def edit_user_profile(request):
             cookie_user.user_name = user_data['user_name']
     
     # Подготовка тэгов
-    pack_tags_json = request.POST.get("tags")
+    pack_tags_json = put_data[0].get("tags")
     if pack_tags_json:
         try:
             pack_tags = json.loads(pack_tags_json)
