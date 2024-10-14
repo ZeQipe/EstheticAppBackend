@@ -193,7 +193,7 @@ def start(request: HttpRequest):
 
     # Создание досок
     for user in list_users:
-        for i in range(random.randint(9, 12)):
+        for i in range(random.randint(70, 80)):
             board_name = f"{random.choice(board_names)} {random.randint(100, 999)}"
             board = Board.objects.create(
                 id=generate_string(35, Board),
