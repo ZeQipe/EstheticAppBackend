@@ -102,10 +102,12 @@ def generate_users():
 
 def parse_result(users, posts):
     result = {}
+    count = 0
     for i in users:
         data = {"email": i.email,
                 "pass": "example123"}
-        result["id"] =  data
+        result[count] = data
+        count += 1
 
     return result
 
@@ -139,7 +141,7 @@ def start(request: HttpRequest):
         avatar_url = None
         if random.choice([True, False]):
             file_name = f"{user_id}{generate_string(3, False)}.jpg"
-            relative_path = f"{settings.MEDIA_URL}avatar/{file_name}"
+            relative_path = f"{settings.MEDIA_URL}avatars/{file_name}"
             avatar_url = request.build_absolute_uri(relative_path)
             copy_and_rename_file(path_images, new_path_images, random.choice(images), file_name)
 
