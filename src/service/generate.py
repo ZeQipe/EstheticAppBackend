@@ -53,11 +53,13 @@ def copy_and_rename_file(src_folder, dest_folder, old_name, new_name):
 def generate_posts():
     posts = []
 
+    listRatio = ["9/16", "2/3", "3/4", "4/5", "1/1"]
+
     for i in range(80):
         post = {
             "postName": f"Post Title {i+1}",
             "description": f"Description for post {i+1}",
-            "aspectRatio": "9/16",
+            "aspectRatio": random.choice(listRatio),
             "tags": random.sample(tags_list, random.randint(1, 3)),
             "link": random.choice([f"https://example.com/post{i+1}", None])
         }
@@ -96,6 +98,16 @@ def generate_users():
         users.append(user)
 
     return users
+
+
+def parse_result(users, posts):
+    result = {}
+    for i in users:
+        data = {"email": i.email,
+                "pass": "example123"}
+        result["id"] =  data
+
+    return result
 
 
 
@@ -161,7 +173,7 @@ def start(request: HttpRequest):
         relative_path = f"{settings.MEDIA_URL}img/{file_name}"
         image_url = request.build_absolute_uri(relative_path)
         copy_and_rename_file(path_images, new_path_images, random.choice(images), file_name)
-        
+
         post = Post.objects.create(
             id=post_id,
             author=author,
@@ -200,7 +212,7 @@ def start(request: HttpRequest):
     print("----------5---------")
 
     # Возвращаем результат
-    return mess[200]
+    return parse_result(list_users, list_posts)
 
     
 
