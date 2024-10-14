@@ -51,14 +51,13 @@ def copy_and_rename_file(src_folder, dest_folder, old_name, new_name):
 
 # Генерация постов
 def generate_posts():
-    aspect_ratios = ["9/16", "16/9", "4/3", "1/1"]
     posts = []
 
     for i in range(80):
         post = {
             "postName": f"Post Title {i+1}",
             "description": f"Description for post {i+1}",
-            "aspectRatio": random.choice(aspect_ratios),
+            "aspectRatio": "9/16",
             "tags": random.sample(tags_list, random.randint(1, 3)),
             "link": random.choice([f"https://example.com/post{i+1}", None])
         }
@@ -127,8 +126,10 @@ def start(request: HttpRequest):
 
         avatar_url = None
         if random.choice([True, False]):
-            relative_path = f"{settings.MEDIA_URL}avatar/{user_id}{generate_string(3, False)}.jpg"
+            file_name = f"{user_id}{generate_string(3, False)}.jpg"
+            relative_path = f"{settings.MEDIA_URL}avatar/{file_name}"
             avatar_url = request.build_absolute_uri(relative_path)
+            copy_and_rename_file(path_images, new_path_images, random.choice(images), file_name)
 
         user = User.objects.create(
             id=user_id,
@@ -141,7 +142,7 @@ def start(request: HttpRequest):
             tags_user=user_data["tags"]
         )
 
-        copy_and_rename_file(path_images, new_path_images, random.choice(images), f"{user_id}.jpg")
+        
         list_users.append(user)
 
     
@@ -156,9 +157,11 @@ def start(request: HttpRequest):
             continue
 
         post_id = generate_string(35, Post)
-        relative_path = f"{settings.MEDIA_URL}img/{post_id}{generate_string(3, False)}.jpg"
+        file_name = f"я{generate_string(3, False)}.jpg"
+        relative_path = f"{settings.MEDIA_URL}img/{file_name}"
         image_url = request.build_absolute_uri(relative_path)
-
+        copy_and_rename_file(path_images, new_path_images, random.choice(images), file_name)
+        
         post = Post.objects.create(
             id=post_id,
             author=author,
@@ -171,7 +174,7 @@ def start(request: HttpRequest):
             link=post_data["link"]
         )
 
-        copy_and_rename_file(path_images, new_path_images, random.choice(images), f"{post_id}.jpg")
+        
         list_posts.append(post)
 
     print("----------3---------")

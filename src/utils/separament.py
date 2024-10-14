@@ -3,6 +3,7 @@ from templates.response import templates as mess
 from apps.users.models import User
 from django.utils.dateformat import DateFormat
 from django.utils.timezone import get_current_timezone
+from apps.posts.models import Post
 
 
 class Parser:
@@ -47,7 +48,7 @@ class Parser:
         :param columns: список колонок
         :return: список отформатированных постов
         """
-        formatted_posts = {"postsAmount": 0,
+        formatted_posts = {"postsAmount": Post.objects.all().count(),
                         "posts": []}
         
         for post in result[start:start+end:]:
@@ -59,8 +60,6 @@ class Parser:
             }
 
             formatted_posts["posts"].append(post)
-        
-        formatted_posts["postsAmount"] = len(formatted_posts["posts"])
 
         return formatted_posts
 
