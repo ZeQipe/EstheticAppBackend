@@ -7,6 +7,7 @@ from service.deleteService import DeletterObject as deletter
 from apps.users.controller import *
 from apps.posts.controller import *
 from apps.dashboards.controller import *
+from service.generate import start
 
 
 # Методы работы с пользователем
@@ -230,3 +231,21 @@ def check_auth(request):
         response = JsonResponse(mess[405], status=405)
         
     return response
+
+# ---------------------------- ---------------------------- ----------------------------
+# Метод для администратора
+@csrf_exempt
+def admin(request):
+    if request.method == "GET":
+        try: 
+            response = start(request)
+
+        except Exception as er:
+            response = mess[400].copy()
+            response["error"] = f"{er}"
+            print(response)
+
+    else:
+        response = mess[405]
+
+    return JsonResponse(response, status=response.get("status", 200))

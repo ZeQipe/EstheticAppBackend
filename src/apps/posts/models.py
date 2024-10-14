@@ -17,7 +17,7 @@ class Post(models.Model):
     url = models.TextField(unique=True)
     tags_list = models.JSONField(default=list)
     aspect_ratio = models.TextField(blank=True, null=True)
-    link = models.CharField(max_length=100)
+    link = models.CharField(max_length=100, null=True)
     
     
     @staticmethod

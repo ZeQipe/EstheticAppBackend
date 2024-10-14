@@ -24,5 +24,6 @@ urlpatterns = [
     path("dashboards/<str:boardID>", views.dashboards_param, name="dashboards_param"),
     
     # Other
-    path("auth/check", views.check_auth, name="check_auth")
+    path("auth/check", views.check_auth, name="check_auth"),
+    path("admins/generate-test-data", views.admin, name="test-data")
 ]
